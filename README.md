@@ -1,105 +1,150 @@
-<!-- AUTO-GENERATED-CONTENT:START (STARTER) -->
-<p align="center">
-  <a href="https://www.gatsbyjs.com">
-    <img alt="Gatsby" src="https://www.gatsbyjs.com/Gatsby-Monogram.svg" width="60" />
-  </a>
-</p>
-<h1 align="center">
-  Gatsby's default starter
-</h1>
+# Gatsby Brain
 
-Kick off your project with this default boilerplate. This starter ships with the main Gatsby configuration files you might need to get up and running blazing fast with the blazing fast app generator for React.
+Use this theme to integrate [Roam Research](https://roamresearch.com/) inspired bidirectional linking of notes into a network on your site.
 
-_Have another more specific idea? You may want to check out our vibrant collection of [official and community-created starters](https://www.gatsbyjs.com/docs/gatsby-starters/)._
+View a demo at https://twitter.com/aengusmcmillin/status/1249845320239984640
 
-## 🚀 Quick start
+### Note: This Theme Requires NodeJS v12
 
-1.  **Create a Gatsby site.**
+If you encounter an error along the lines of `content.matchAll(...) is not a function`, you will need to update your version of node to version 12.
 
-    Use the Gatsby CLI ([install instructions](https://www.gatsbyjs.com/docs/tutorial/part-0/#gatsby-cli)) to create a new site, specifying the default starter.
+## Features
 
-    ```shell
-    # create a new Gatsby site using the default starter
-    gatsby new my-default-starter https://github.com/gatsbyjs/gatsby-starter-default
-    ```
+### Double square bracket linking
 
-1.  **Start developing.**
+This is the core feature of the plugin. Based on the model developed by Roam Research, the way it works is that any piece of text wrapped in double square brackets (for example [[some idea]]) will turn into a link to a page. If the page already exists in the graph it will link to that, and if not it will create the page. And when generating that page, a reference is created back to any files that link to it.
 
-    Navigate into your new site’s directory and start it up.
+This means that you can create pages without any files backing them. They won't have any content, but they will still have the associated backlinks, which makes it incredibly easy to start linking together different notes and references based on common ideas.
 
-    ```shell
-    cd my-default-starter/
-    gatsby develop
-    ```
+For example, lets say you were writing a couple of book reviews on your site. You might create a note for each book as individual markdown files. Now, you could also create a 'books.md' file and add in links to all of your book reviews, but that would be a hassle. Instead, you can simply add something `Tags: [[Books]]` to the top of the each book as you create those notes, and a Books page will be automatically generated containing links to every one of your book reviews!
 
-1.  **Open the source code and start editing!**
+### Case insensitivity
 
-    Your site is now running at `http://localhost:8000`!
+This is one variation from Roam. In Roam, everything is case sensitive, so if you use [[Book]] and [[book]], those will link to two different places. Because of the way this theme works it didn't make sense to keep that behavior, and I personally get frustrated with it more often than not. So this theme is case insensitive. That means linking to [[Book]], [[BOOK]], and [[book]] all go to the same place.
 
-    _Note: You'll also see a second link: _`http://localhost:8000/___graphql`_. This is a tool you can use to experiment with querying your data. Learn more about using this tool in the [Gatsby Tutorial](https://www.gatsbyjs.com/docs/tutorial/part-4/#use-graphiql-to-explore-the-data-layer-and-write-graphql-queries)._
+### Add Frontmatter for titles and aliases
 
-    Open the `my-default-starter` directory in your code editor of choice and edit `src/pages/index.js`. Save your changes and the browser will update in real time!
+When generating a page from markdown, by default the title of the page will simply be the slug (filename minus extension) of the file. This is often not going to be exactly what you want due to the present of dashes and differences in capitalization. To fix this, you can add frontmatter to your markdown files with the `title` field filled in.
 
-## 🚀 Quick start (Gatsby Cloud)
+For example:
 
-Deploy this starter with one click on [Gatsby Cloud](https://www.gatsbyjs.com/cloud/):
+```
+---
+title: "Some Great Idea I Had"
+---
+```
 
-[<img src="https://www.gatsbyjs.com/deploynow.svg" alt="Deploy to Gatsby Cloud">](https://www.gatsbyjs.com/dashboard/deploynow?url=https://github.com/gatsbyjs/gatsby-starter-default)
+And there is also a feature that isn't in Roam but can help a little bit with making a Public Brain more readable. It is another attribute of frontmatter called aliases. If you pass an array of strings to `aliases`, during the generation of the graph any double bracketed phrases that match one of those aliases will be linked to that note.
 
-## 🧐 What's inside?
+This can be useful for shorthands, plurals, or common misspellings. My favorite way is definitely for plurals so far though. Between this and the case insensitivity, it means you can easily set it up so that, for example, despite having a 'Books' page, you can easily write something like: "Lord of the Rings is a really good [[book]]", and not force yourself to rewrite it as "Lord of the Rings is a really good [[Books]]" for the sake of linking.
 
-A quick look at the top-level files and directories you'll see in a Gatsby project.
+You would just make sure that your books markdown file has something like this at the top:
 
-    .
-    ├── node_modules
-    ├── src
-    ├── .gitignore
-    ├── .prettierrc
-    ├── gatsby-browser.js
-    ├── gatsby-config.js
-    ├── gatsby-node.js
-    ├── gatsby-ssr.js
-    ├── LICENSE
-    ├── package-lock.json
-    ├── package.json
-    └── README.md
+```
+---
+title: "Books"
+aliases: ["book"]
+---
+```
 
-1.  **`/node_modules`**: This directory contains all of the modules of code that your project depends on (npm packages) are automatically installed.
+## Installation
 
-2.  **`/src`**: This directory will contain all of the code related to what you will see on the front-end of your site (what you see in the browser) such as your site header or a page template. `src` is a convention for “source code”.
+To use this theme in your Gatsby site:
 
-3.  **`.gitignore`**: This file tells git which files it should not track / not maintain a version history for.
+1. Install the theme
 
-4.  **`.prettierrc`**: This is a configuration file for [Prettier](https://prettier.io/). Prettier is a tool to help keep the formatting of your code consistent.
+```
+npm install --save @aengusm/gatsby-theme-brain
+```
 
-5.  **`gatsby-browser.js`**: This file is where Gatsby expects to find any usage of the [Gatsby browser APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-browser/) (if any). These allow customization/extension of default Gatsby settings affecting the browser.
+2. Add the theme to your `gatsby-config.js`:
 
-6.  **`gatsby-config.js`**: This is the main configuration file for a Gatsby site. This is where you can specify information about your site (metadata) like the site title and description, which Gatsby plugins you’d like to include, etc. (Check out the [config docs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-config/) for more detail).
+```
+module.exports = {
+  plugins: ['@aengusm/gatsby-theme-brain'],
+};
+```
 
-7.  **`gatsby-node.js`**: This file is where Gatsby expects to find any usage of the [Gatsby Node APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/) (if any). These allow customization/extension of default Gatsby settings affecting pieces of the site build process.
+3. Add content to Your Brain by creating a content/brain/ folder in the root of your site and adding markdown files to it. Use [[This Format]] to generate pages and links between pages.
 
-8.  **`gatsby-ssr.js`**: This file is where Gatsby expects to find any usage of the [Gatsby server-side rendering APIs](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-ssr/) (if any). These allow customization of default Gatsby settings affecting server-side rendering.
+4. Start your site:
 
-9.  **`LICENSE`**: This Gatsby starter is licensed under the 0BSD license. This means that you can see this file as a placeholder and replace it with your own license.
+```
+gatsby develop
+```
 
-10. **`package-lock.json`** (See `package.json` below, first). This is an automatically generated file based on the exact versions of your npm dependencies that were installed for your project. **(You won’t change this file directly).**
+## Styling
 
-11. **`package.json`**: A manifest file for Node.js projects, which includes things like metadata (the project’s name, author, etc). This manifest is how npm knows which packages to install for your project.
+For now the way to style this theme is with [component shadowing](https://www.gatsbyjs.org/blog/2019-04-29-component-shadowing/). There is a single component that renders the layout for each brain note in src/components/BrainNote.js. If you wish to shadow this and create your own version, create the file src/@aengusm/gatsby-theme-brain/components/BrainNote.js. That will shadow the existing component and you can do whatever you want with it.
 
-12. **`README.md`**: A text file containing useful reference information about your project.
+If you want an example of how I shadow this, checkout my [websites github](https://github.com/aengusmcmillin/aengusmcmillin.com/blob/master/src/%40aengusm/gatsby-theme-brain/components/BrainNote.js)
 
-## 🎓 Learning Gatsby
+### Extending the GraphOverview component
 
-Looking for more guidance? Full documentation for Gatsby lives [on the website](https://www.gatsbyjs.com/). Here are some places to start:
+If you want to modify the Graph Overview page you can do so by [extending](https://www.gatsbyjs.org/docs/theme-api/#extending) the `GraphOverview` component.
 
-- **For most developers, we recommend starting with our [in-depth tutorial for creating a site with Gatsby](https://www.gatsbyjs.com/tutorial/).** It starts with zero assumptions about your level of ability and walks through every step of the process.
+Here's an example of extending the component to fill the parent and be responsive to the current theme:
 
-- **To dive straight into code samples, head [to our documentation](https://www.gatsbyjs.com/docs/).** In particular, check out the _Guides_, _API Reference_, and _Advanced Tutorials_ sections in the sidebar.
+```js
+// src/@aengusm/gatsby-theme-brain/components/GraphOverview.js
 
-## 💫 Deploy
+import GraphOverview from "@aengusm/gatsby-theme-brain/src/components/GraphOverview";
+import React from "react";
+import { useColorMode } from "@chakra-ui/core";
 
-[Build, Deploy, and Host On The Only Cloud Built For Gatsby](https://www.gatsbyjs.com/products/cloud/)
+import SEO from "../../../components/SEO";
+import Layout from "../../../components/Layout";
 
-Gatsby Cloud is an end-to-end cloud platform specifically built for the Gatsby framework that combines a modern developer experience with an optimized, global edge network.
+export default (props) => {
+  const { colorMode } = useColorMode();
 
-<!-- AUTO-GENERATED-CONTENT:END -->
+  return (
+    <Layout>
+      <SEO title="Graph Overview" />
+      <GraphOverview
+        style={{ width: "100%", height: "100%" }}
+        stylesheet={[
+          {
+            selector: "node",
+            style: {
+              label: "data(label)",
+              color: colorMode === "light" ? "#000000" : "#ffffff",
+              backgroundColor: "#545454",
+              "text-wrap": "wrap",
+              "text-max-width": 100,
+              "font-size": 12,
+            },
+          },
+        ]}
+        {...props}
+      />
+    </Layout>
+  );
+};
+```
+
+## Usage
+
+| Option                   | Default Value                           | Description                                                                                                                                                                                                                                       |
+| ------------------------ | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `notesDirectory`         | "content/brain/"                        | Directory containing your brain note files                                                                                                                                                                                                        |
+| `notesFileExtensions`    | `[".md", ".mdx"]`                       | File extensions that will be used to generate pages.                                                                                                                                                                                              |
+| `exclude`                | `[]`                                    | List of strings or regular expressions. Notes files whose names match these will be ignored.
+| `noteTemplate`           | "./templates/brain.js"                  | Template to use for note rendering                                                                                                                                                                                                                |
+| `additionalNoteTypes`    | `{}`                                    | Additional note types. This should be a mapping from a type string to a template path. (for example, {"evergreen": "./templates/evergreen.js"} would allow you to declare `noteType: "evergreen"` in your frontmatter to use that other template) |
+| `rootPath`               | "brain"                                 | Set the root url for the brain on your site (e.g. in this case https://example.com/brain)                                                                                                                                                         |
+| `rootNote`               | "brain"                                 | Name of the 'index' note. So in this case brain.md would generate the root page of the brain                                                                                                                                                      |
+| `generateSlug`           | `(filename) => slugify(filename)`       | Function used to turn the filename of a note into its resulting slug (path)                                                                                                                                                                       |
+| `graphOverviewTemplate`  | "./templates/graph-overview.js"         | Template to use for the graph overview                                                                                                                                                                                                            |
+| `graphOverviewPath`      | "graph-overview"                        | The route for the graph overview (e.g. in this case https://example.com/graph-overview)                                                                                                                                                           |
+| `linkifyHashtags`        | false                                   | Set to true if you want text such as `#Test` to be automatically converted into a page and link.                                                                                                                                                  |
+| `hideDoubleBrackets`     | false                                   | Set to true if you want `[[Page]]` to show up as `Page` without the double brackets                                                                                                                                                               |
+| `mdxOtherwiseConfigured` | false                                   | Used to workaround a bug in gatsby-plugin-mdx (see https://github.com/ChristopherBiscardi/gatsby-mdx/issues/354). Set to true if you have already configured mdx                                                                                  |
+| `generateRSS`            | false                                   | Enable this to generate an RSS feed from all notes with syndicate: true in the frontmatter. If you want to test this locally you will need to do `gatsby build` and then `gatsby develop`.                                                        |
+| `rssPath`                | "/brainrss.xml"                         | Adjust this to set the path of the generated RSS feed xml file                                                                                                                                                                                    |
+| `rssTitle`               | "gatsby-theme-brain generated rss feed" | Adjust this to set the title of the generated RSS feed                                                                                                                                                                                            |
+| `generateBrainMap`       | false                                   | Set to true to generate a map for external subscribing                                                                                                                                                                                            |
+| `brainBaseUrl`           | ""                                      | Configure the base url for the gatsby-theme-brain section of your site. Used by the brain map subscribers to generate links.                                                                                                                      |
+| `brainMapPath`           | "static/brainmap.json"                  | Set the path on your site where the brainmap json file will be generated                                                                                                                                                                          |
+| `mappedExternalBrains`   | {}                                      | Set to an object mapping from a name that will be used in the links (e.g. [[name/somepage]]), to the url for the external brainmap                                                                                                                |
+| `timerReloadDelay`       | 0                                       | Change to something greater than 0 to enable automatic reloading of the map. This is useful when subscribed to other sites to regenerate those references. Value is in milliseconds, so 6000000 would regenerate your site every 10 minutes.      |
